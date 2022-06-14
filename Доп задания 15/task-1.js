@@ -1,6 +1,6 @@
 
-const DATA_POST_URL = 'https://jsonplaceholder.typicode.com/posts';
-const CONTENT_POST_URL = 'https://jsonplaceholder.typicode.com/posts';
+const POSTS_POST_URL = 'https://jsonplaceholder.typicode.com/posts';
+const CONTENT_POST_URL = 'https://jsonplaceholder.typicode.com/comments';
 // const dataContainer = document.querySelector('#data-container');
 
 const createPostElement = () => {
@@ -42,6 +42,23 @@ const createPostElement = () => {
 
 const HTML = createPostElement();
 document.body.append(HTML);
-const renderPost = (postIdpostId) => {
 
+const renderPost = async (id) => {
+
+    const requests = await fetch(`${POSTS_POST_URL}/${id}`);
+    console.log('requests', requests);
+    // const response = await fetch(requests);
+    // console.log('response', response);
+    const datas = await requests.json();
+    // console.log('datas', datas);
+    // datas.forEach((data) => {
+    console.log('datas', datas);
+
+        // const urlHTML = createDataElement(data.title);
+        // dataElementUl.append(urlHTML);
+    // });
 }
+
+renderPost(1);
+// renderPost(CONTENT_POST_URL);
+
