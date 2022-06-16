@@ -8,8 +8,6 @@ const createPostElement = (postTitle, postText) => {
     const commentElement = document.createElement('b');
     const postCommentElement = document.createElement('div');
     const innerPostCommentElement = document.createElement('div');
-    // const authorsElement = document.createElement('span');
-    // const textElement = document.createElement('span');
     postElement.setAttribute("id", "post");
     postElement.className = "post";
     headerElement.className = "post__title";
@@ -20,49 +18,47 @@ const createPostElement = (postTitle, postText) => {
     commentElement.textContent = "Комментарии";
     postCommentElement.className = "post__comments";
     innerPostCommentElement.className = "post-comment";
-    // authorsElement.className = "post-comment__author";
-    // authorsElement.textContent = "";
-    // textElement.className = "post-comment__text";
-    // textElement.textContent = "";
+
     postElement.append(headerElement);
     postElement.append(postTextElement);
     postElement.append(commentElement);
     postElement.append(postCommentElement);
     postCommentElement.append(innerPostCommentElement);
-    // innerPostCommentElement.append(authorsElement);
-    // innerPostCommentElement.append(textElement);
+
     return postElement;
 }
 
 const renderPost = async (id) => {
+    try {
+        const requestsPost = await fetch(`${POSTS_POST_URL}/${id}`);
+        const post = await requestsPost.json();
+        const HTML = createPostElement(post.title, post.body);
+        document.body.append(HTML);
 
-    const requestsPost = await fetch(`${POSTS_POST_URL}/${id}`);
-    const post = await requestsPost.json();
-    const HTML = createPostElement(post.title, post.body);
-    document.body.append(HTML);
+        const requestsComments = await fetch(`${CONTENT_POST_URL}?postId=${id}`);
+        const comments = await requestsComments.json();
+        console.log('comments', comments)
+        const commentsContainer = document.querySelector('.post-comment');
+        const textCommentsContainer = document.querySelector('.post-comment__text');
+        const autorCommentsContainer = document.querySelector('.post-comment__author');
 
-    const requestsComments = await fetch(`${CONTENT_POST_URL}?postId=${id}`);
-    const comments = await requestsComments.json();
-    console.log('comments', comments)
-    const commentsContainer = document.querySelector('.post-comment');
-    const textCommentsContainer = document.querySelector('.post-comment__text');
-    const autorCommentsContainer = document.querySelector('.post-comment__author');
+        comments.forEach(comment => {
+            
+            const authorsElement = document.createElement('span');
+            const textElement = document.createElement('span');
 
-    comments.forEach(comment => {
-        
-        const authorsElement = document.createElement('span');
-        const textElement = document.createElement('span');
+            authorsElement.className = "post-comment__author";
+            authorsElement.textContent = comment.email;
+            commentsContainer.append(authorsElement);
 
-        authorsElement.className = "post-comment__author";
-        authorsElement.textContent = comment.email;
-        commentsContainer.append(authorsElement);
+            textElement.className = "post-comment__text";
 
-        textElement.className = "post-comment__text";
-
-        textElement.textContent = comment.body;
-        commentsContainer.append(textElement);
-    });
-
+            textElement.textContent = comment.body;
+            commentsContainer.append(textElement);
+        });
+    } catch (error) {
+        console.error("Произошла ошибка в получении данных...", error);
+    }
 }
 
 renderPost(2);
