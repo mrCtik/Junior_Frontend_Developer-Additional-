@@ -1,64 +1,69 @@
-
 const POSTS_POST_URL = 'https://jsonplaceholder.typicode.com/posts';
 const CONTENT_POST_URL = 'https://jsonplaceholder.typicode.com/comments';
-// const dataContainer = document.querySelector('#data-container');
 
-const createPostElement = () => {
+const createPostElement = (postTitle, postText) => {
     const postElement = document.createElement('div');
     const headerElement = document.createElement('h1');
     const postTextElement = document.createElement('p');
     const commentElement = document.createElement('b');
     const postCommentElement = document.createElement('div');
     const innerPostCommentElement = document.createElement('div');
-    const authorsElement = document.createElement('span');
-    const textElement = document.createElement('span');
+    // const authorsElement = document.createElement('span');
+    // const textElement = document.createElement('span');
     postElement.setAttribute("id", "post");
     postElement.className = "post";
     headerElement.className = "post__title";
-    headerElement.textContent = "Название поста";
+    headerElement.textContent = postTitle;
     postTextElement.className = "post__text";
-    postTextElement.textContent = "Текст поста";
+    postTextElement.textContent = postText;
     commentElement.className = "post__comments-text";
     commentElement.textContent = "Комментарии";
     postCommentElement.className = "post__comments";
     innerPostCommentElement.className = "post-comment";
-    authorsElement.className = "post-comment__author";
-    authorsElement.textContent = "maxim@gmail.com";
-    textElement.className = "post-comment__text";
-    textElement.textContent = `laudantium enim quasi est quidem magnam voluptate ipsam eos\ntempora quo
-    necessitatibus\ndolor quam autem quasi\nreiciendis et nam sapiente
-    accusantium`;
-
+    // authorsElement.className = "post-comment__author";
+    // authorsElement.textContent = "";
+    // textElement.className = "post-comment__text";
+    // textElement.textContent = "";
     postElement.append(headerElement);
     postElement.append(postTextElement);
     postElement.append(commentElement);
     postElement.append(postCommentElement);
     postCommentElement.append(innerPostCommentElement);
-    innerPostCommentElement.append(authorsElement);
-    innerPostCommentElement.append(textElement);
-
+    // innerPostCommentElement.append(authorsElement);
+    // innerPostCommentElement.append(textElement);
     return postElement;
 }
 
-const HTML = createPostElement();
-document.body.append(HTML);
-
 const renderPost = async (id) => {
 
-    const requests = await fetch(`${POSTS_POST_URL}/${id}`);
-    console.log('requests', requests);
-    // const response = await fetch(requests);
-    // console.log('response', response);
-    const datas = await requests.json();
-    // console.log('datas', datas);
-    // datas.forEach((data) => {
-    console.log('datas', datas);
+    const requestsPost = await fetch(`${POSTS_POST_URL}/${id}`);
+    const post = await requestsPost.json();
+    const HTML = createPostElement(post.title, post.body);
+    document.body.append(HTML);
 
-        // const urlHTML = createDataElement(data.title);
-        // dataElementUl.append(urlHTML);
-    // });
+    const requestsComments = await fetch(`${CONTENT_POST_URL}?postId=${id}`);
+    const comments = await requestsComments.json();
+    console.log('comments', comments)
+    const commentsContainer = document.querySelector('.post-comment');
+    const textCommentsContainer = document.querySelector('.post-comment__text');
+    const autorCommentsContainer = document.querySelector('.post-comment__author');
+
+    comments.forEach(comment => {
+        
+        const authorsElement = document.createElement('span');
+        const textElement = document.createElement('span');
+
+        authorsElement.className = "post-comment__author";
+        authorsElement.textContent = comment.email;
+        commentsContainer.append(authorsElement);
+
+        textElement.className = "post-comment__text";
+
+        textElement.textContent = comment.body;
+        commentsContainer.append(textElement);
+    });
+
 }
 
-renderPost(1);
-// renderPost(CONTENT_POST_URL);
+renderPost(2);
 
